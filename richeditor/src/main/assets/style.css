@@ -16,28 +16,57 @@
 
 @charset "UTF-8";
 
-
 html {
-  height: 100%;
+    height: 100%;
 }
 
 body {
-  overflow: scroll;
-  display: table;
-  table-layout: fixed;
-  width: 100%;
-  min-height:100%;
+    max-width: 100%;
+    min-height: 100%;
+    overflow: auto;
+}
+
+body, h1, p {
+    margin: 0;
+}
+
+div {
+    display: block;
+    position: static;
+    overflow-y: hidden;
+    word-break: break-word;
+}
+
+#editor:focus {
+    outline: 0px solid transparent;
+}
+
+.placeholder[placeholder]:after {
+    content: attr(placeholder);
+    position: absolute;
+    top: 0px;
+    color: #cccccc;
 }
 
 #editor {
-  display: table-cell;
-  outline: 0px solid transparent;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
+    -webkit-user-select: auto !important;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    min-height: 100%;
+    height: 100%;
+    display: block;
+    color:#666666;
+    font-size: 12pt;
+    max-width: 100%;
 }
 
-#editor[placeholder]:empty:not(:focus):before {
-  content: attr(placeholder);
-  opacity: .5;
-}}
+#editor div > * {
+    max-width: 100%;
+    overflow-y: hidden;
+    word-break: break-word;
+}
+
+* {
+    font-size: 12pt !important;
+    line-height: 12pt !important;
+    background-color: transparent !important;
+}
