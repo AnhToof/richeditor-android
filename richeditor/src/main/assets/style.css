@@ -41,11 +41,9 @@ div {
     outline: 0px solid transparent;
 }
 
-.placeholder[placeholder]:after {
-    content: attr(placeholder);
-    position: absolute;
-    top: 0px;
-    color: #cccccc;
+#editor[placeholder]:empty:not(:focus):before {
+  content: attr(placeholder);
+  opacity: .5;
 }
 
 #editor {
