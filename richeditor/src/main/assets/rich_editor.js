@@ -302,7 +302,6 @@ RE.removeFormat = function() {
 }
 
 // Event Listeners
-RE.editor.addEventListener("input", RE.callback);
 RE.editor.addEventListener("touchmove", function() {
   RE.backuprange();
   RE.enabledEditingItems();
@@ -315,13 +314,10 @@ RE.editor.addEventListener("touchend", function() {
   RE.backuprange();
   RE.enabledEditingItems();
 });
-document.addEventListener("input", function() {
-  RE.backuprange();
-  RE.enabledEditingItems();
-});
+document.addEventListener("input", RE.callback);
 RE.editor.addEventListener("keyup", function(e) {
-    var KEY_LEFT = 37, KEY_RIGHT = 39;
-    if (e.which == KEY_LEFT || e.which == KEY_RIGHT) {
+    var KEY_LEFT = 37, KEY_RIGHT = 39, KEY_DEL = 8;
+    if (e.which == KEY_LEFT || e.which == KEY_RIGHT || e.which == KEY_DEL) {
         RE.enabledEditingItems(e);
     }
 });

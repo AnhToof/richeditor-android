@@ -19,6 +19,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * Copyright (C) 2017 Wasabeef
@@ -58,6 +59,9 @@ public class RichEditor extends WebView {
     JUSTIFYLEFT,
     JUSTIFYRIGHT
   }
+
+  private String REGEX_TRIM_HTML_END = "@(<br\\s*?\\/?>)+|(<br\\s*\\/?>)+$";
+  private String REGEX_TRIM_HTML_START = "^(<br\\s*?\\/?>)+|(<br\\s*\\/?>)+$";
 
   public interface OnTextChangeListener {
 
@@ -385,6 +389,11 @@ public class RichEditor extends WebView {
 
   public void clearFocusEditor() {
     exec("javascript:RE.blurFocus();");
+  }
+
+  public void trim() {
+    mContents.replace(REGEX_TRIM_HTML_END, "");
+    mContents.replaceAll(REGEX_TRIM_HTML_START, "");
   }
 
   private String convertHexColorString(int color) {

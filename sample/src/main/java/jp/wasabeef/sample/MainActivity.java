@@ -3,8 +3,10 @@ package jp.wasabeef.sample;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import java.util.List;
 import jp.wasabeef.richeditor.RichEditor;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,6 +33,13 @@ public class MainActivity extends AppCompatActivity {
     mEditor.setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
       @Override public void onTextChange(String text) {
         mPreview.setText(text);
+      }
+    });
+
+    mEditor.setOnDecorationChangeListener(new RichEditor.OnDecorationStateListener() {
+      @Override
+      public void onStateChangeListener(String text, List<RichEditor.Type> types) {
+        Log.d("AAA", "Text:" + text);
       }
     });
 
@@ -85,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
     findViewById(R.id.action_heading1).setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         mEditor.setHeading(1);
+        mEditor.trim();
       }
     });
 
