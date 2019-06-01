@@ -92,42 +92,53 @@ RE.setInputEnabled = function(inputEnabled) {
 
 RE.undo = function() {
     document.execCommand('undo', false, null);
+    RE.enabledEditingItems();
 }
 
 RE.redo = function() {
     document.execCommand('redo', false, null);
+    RE.enabledEditingItems();
 }
 
 RE.setBold = function() {
     document.execCommand('bold', false, null);
+    RE.enabledEditingItems();
 }
 
 RE.setItalic = function() {
     document.execCommand('italic', false, null);
+    RE.enabledEditingItems();
 }
 
 RE.setSubscript = function() {
     document.execCommand('subscript', false, null);
+    RE.enabledEditingItems();
 }
 
 RE.setSuperscript = function() {
     document.execCommand('superscript', false, null);
+    RE.enabledEditingItems();
 }
 
 RE.setStrikeThrough = function() {
     document.execCommand('strikeThrough', false, null);
+        RE.enabledEditingItems();
+    RE.enabledEditingItems();
 }
 
 RE.setUnderline = function() {
     document.execCommand('underline', false, null);
+    RE.enabledEditingItems();
 }
 
 RE.setBullets = function() {
     document.execCommand('insertUnorderedList', false, null);
+    RE.enabledEditingItems();
 }
 
 RE.setNumbers = function() {
     document.execCommand('insertOrderedList', false, null);
+    RE.enabledEditingItems();
 }
 
 RE.setTextColor = function(color) {
@@ -314,11 +325,8 @@ RE.editor.addEventListener("touchend", function() {
   RE.backuprange();
   RE.enabledEditingItems();
 });
-document.addEventListener("input", RE.callback);
+RE.editor.addEventListener("input", RE.callback);
 RE.editor.addEventListener("keyup", function(e) {
-    var KEY_LEFT = 37, KEY_RIGHT = 39, KEY_DEL = 8;
-    if (e.which == KEY_LEFT || e.which == KEY_RIGHT || e.which == KEY_DEL) {
-        RE.enabledEditingItems(e);
-    }
+   RE.enabledEditingItems(e);
 });
 RE.editor.addEventListener("click", RE.enabledEditingItems);

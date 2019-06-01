@@ -391,11 +391,6 @@ public class RichEditor extends WebView {
     exec("javascript:RE.blurFocus();");
   }
 
-  public void trim() {
-    mContents.replace(REGEX_TRIM_HTML_END, "");
-    mContents.replaceAll(REGEX_TRIM_HTML_START, "");
-  }
-
   private String convertHexColorString(int color) {
     return String.format("#%06X", (0xFFFFFF & color));
   }
