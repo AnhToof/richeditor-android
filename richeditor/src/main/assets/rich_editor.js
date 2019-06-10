@@ -28,7 +28,7 @@ document.addEventListener("selectionchange", function() { RE.backuprange(); });
 
 // Initializations
 RE.callback = function() {
-    window.location.href = "re-callback://" + encodeURI(RE.getHtml());
+    window.location.href = "re-callback://" + encodeURIComponent(RE.getHtml());
 }
 
 RE.setHtml = function(contents) {
@@ -122,13 +122,10 @@ RE.setSuperscript = function() {
 
 RE.setStrikeThrough = function() {
     document.execCommand('strikeThrough', false, null);
-        RE.enabledEditingItems();
-    RE.enabledEditingItems();
 }
 
 RE.setUnderline = function() {
     document.execCommand('underline', false, null);
-    RE.enabledEditingItems();
 }
 
 RE.setBullets = function() {
@@ -291,7 +288,7 @@ RE.enabledEditingItems = function(e) {
         items.push(formatBlock);
     }
 
-    window.location.href = "re-state://" + encodeURI(items.join(','));
+    window.location.href = "re-state://" + encodeURIComponent(items.join(','));
 }
 
 RE.focus = function() {
@@ -302,7 +299,11 @@ RE.focus = function() {
     selection.removeAllRanges();
     selection.addRange(range);
     RE.editor.focus();
-    RE.enabledEditingItems()
+}
+
+
+RE.focusCursor = function() {
+  RE.editor.click();
 }
 
 RE.blurFocus = function() {

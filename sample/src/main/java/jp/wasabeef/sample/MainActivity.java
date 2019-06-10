@@ -42,14 +42,14 @@ public class MainActivity extends AppCompatActivity {
     mEditor.setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
       @Override public void onTextChange(String text) {
         mPreview.setText(text);
-        mEditor.focusEditor();
+        mEditor.focusCursor();
       }
     });
 
     mEditor.setOnDecorationChangeListener(new RichEditor.OnDecorationStateListener() {
       @Override
       public void onStateChangeListener(String text, List<RichEditor.Type> types) {
-        Log.d("AAA", "Text:" + text);
+        Log.d("AAA", "Text:" + types);
       }
     });
 

@@ -388,6 +388,10 @@ public class RichEditor extends WebView {
     exec("javascript:RE.focus();");
   }
 
+  public void focusCursor() {
+    exec("javascript:RE.focusCursor();");
+  }
+
   public void clearFocusEditor() {
     exec("javascript:RE.blurFocus();");
   }
