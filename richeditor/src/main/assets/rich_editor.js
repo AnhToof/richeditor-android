@@ -302,6 +302,7 @@ RE.focus = function() {
     selection.removeAllRanges();
     selection.addRange(range);
     RE.editor.focus();
+    RE.enabledEditingItems()
 }
 
 RE.blurFocus = function() {
@@ -326,7 +327,15 @@ RE.editor.addEventListener("touchend", function() {
   RE.enabledEditingItems();
 });
 RE.editor.addEventListener("input", RE.callback);
-RE.editor.addEventListener("keyup", function(e) {
-   RE.enabledEditingItems(e);
+RE.editor.addEventListener("keydown", function(e) {
+    var KEY_LEFT = 37, KEY_RIGHT = 39, KEY_DEL = 8, KEY_DEL_OTHER = 67;
+    var x = e.which || e.keyCode;
+    if (x == KEY_LEFT || x == KEY_RIGHT || x == KEY_DEL || x == KEY_DEL_OTHER) {
+        RE.enabledEditingItems(e);
+    }
 });
 RE.editor.addEventListener("click", RE.enabledEditingItems);
+RE.editor.addEventListener("focus", function(){
+    RE.backuprange();
+    RE.enabledEditingItems();
+});

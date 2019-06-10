@@ -126,6 +126,7 @@ public class RichEditor extends WebView {
   }
 
   private void callback(String text) {
+    String oldContent = getHtml();
     mContents = text.replaceFirst(CALLBACK_SCHEME, "");
     if (mTextChangeListener != null) {
       mTextChangeListener.onTextChange(mContents);
