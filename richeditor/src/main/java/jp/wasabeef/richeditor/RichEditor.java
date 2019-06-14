@@ -11,8 +11,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
@@ -69,7 +67,7 @@ public class RichEditor extends WebView {
     }
 
     public interface ReceivedValue {
-        int valueReturned(String value);
+        void valueReturned(String value);
     }
 
     private static final String SETUP_HTML = "file:///android_asset/editor.html";
@@ -179,7 +177,14 @@ public class RichEditor extends WebView {
                 evaluateJavascript("javascript:RE.currentSelection;", new ValueCallback<String>() {
                     @Override
                     public void onReceiveValue(String value) {
-                        String result = value.substring(value.length() - 2, value.length() - 1);
+                        int index = 0;
+                        for (int i = value.length() - 1; i > 0; i--) {
+                            if (value.charAt(i) == ':') {
+                                index = i;
+                                break;
+                            }
+                        }
+                        String result = value.substring(index + 1, value.length() - 1);
                         if (mReceivedValue != null) {
                             mReceivedValue.valueReturned(result);
                         }
@@ -449,7 +454,9 @@ public class RichEditor extends WebView {
         exec("javascript:RE.focusAtPoint(" + x + ", " + y + ");");
     }
 
-    public void focusAtCaret(int caret) { exec("javascript:RE.focusAtCaret(" + caret +");"); }
+    public void focusAtCaret(int caret) {
+        exec("javascript:RE.focusAtCaret(" + caret + ");");
+    }
 
     private String convertHexColorString(int color) {
         return String.format("#%06X", (0xFFFFFF & color));

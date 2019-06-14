@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements RichEditor.Receiv
     }
 
     @Override
-    public int valueReturned(String value) {
-        return Integer.parseInt(value);
+    public void valueReturned(String value) {
+        Log.d("AAA","AAA:" + value);
     }
 }
