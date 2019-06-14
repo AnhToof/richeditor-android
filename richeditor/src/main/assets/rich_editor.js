@@ -348,3 +348,15 @@ RE.focusAtPoint = function(x, y) {
     selection.addRange(range);
     RE.editor.focus();
 };
+
+RE.focusAtCaret = function(caret) {
+var node = RE.editor;
+node.focus();
+var textNode = node.firstChild;
+var range = document.createRange();
+range.setStart(textNode, caret);
+range.setEnd(textNode, caret);
+var sel = window.getSelection();
+sel.removeAllRanges();
+sel.addRange(range);
+};

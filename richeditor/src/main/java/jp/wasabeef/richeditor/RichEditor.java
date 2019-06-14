@@ -10,6 +10,13 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.BaseInputConnection;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -61,14 +68,20 @@ public class RichEditor extends WebView {
         void onAfterInitialLoad(boolean isReady);
     }
 
+    public interface ReceivedValue {
+        int valueReturned(String value);
+    }
+
     private static final String SETUP_HTML = "file:///android_asset/editor.html";
     private static final String CALLBACK_SCHEME = "re-callback://";
     private static final String STATE_SCHEME = "re-state://";
     private boolean isReady = false;
     private String mContents;
+    private String mOldContentsToCompare = "";
     private OnTextChangeListener mTextChangeListener;
     private OnDecorationStateListener mDecorationStateListener;
     private AfterInitialLoadListener mLoadListener;
+    private ReceivedValue mReceivedValue;
 
     public RichEditor(Context context) {
         this(context, null);
@@ -92,6 +105,31 @@ public class RichEditor extends WebView {
         applyAttributes(context, attrs);
     }
 
+    @Override
+    public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
+        return new BaseInputConnection(this, false);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        boolean dispatchFirst = super.dispatchKeyEvent(event);
+        // Listening here for whatever key events you need
+        if (event.getAction() == KeyEvent.ACTION_UP) {
+            switch (event.getKeyCode()) {
+                case KeyEvent.KEYCODE_SPACE: {
+                    Log.d("AAA", "SPACE");
+                    mOldContentsToCompare = mContents;
+                    break;
+                }
+                case KeyEvent.KEYCODE_DEL: {
+                    Log.d("AAA", "DELETE");
+                    break;
+                }
+            }
+        }
+        return dispatchFirst;
+    }
+
     protected EditorWebViewClient createWebviewClient() {
         return new EditorWebViewClient();
     }
@@ -108,8 +146,20 @@ public class RichEditor extends WebView {
         mLoadListener = listener;
     }
 
+    public void setOnReceivedValue(ReceivedValue listener) {
+        mReceivedValue = listener;
+    }
+
     private void callback(String text) {
         mContents = text.replaceFirst(CALLBACK_SCHEME, "");
+        if (!mOldContentsToCompare.isEmpty()) {
+            int indexAdded = Utils.indexOfNewCharacterAdded(mOldContentsToCompare, mContents);
+            String contentBefore = Utils.getTextBeforeIndex(mContents, indexAdded);
+            if (Utils.isKindOfLink(contentBefore)) {
+                //insertLink(contentBefore, contentBefore);
+            }
+            mOldContentsToCompare = "";
+        }
         if (mTextChangeListener != null) {
             mTextChangeListener.onTextChange(mContents);
         }
@@ -125,6 +175,17 @@ public class RichEditor extends WebView {
         }
 
         if (mDecorationStateListener != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                evaluateJavascript("javascript:RE.currentSelection;", new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {
+                        String result = value.substring(value.length() - 2, value.length() - 1);
+                        if (mReceivedValue != null) {
+                            mReceivedValue.valueReturned(result);
+                        }
+                    }
+                });
+            }
             mDecorationStateListener.onStateChangeListener(state, types);
         }
     }
@@ -387,6 +448,8 @@ public class RichEditor extends WebView {
     public void focusAtPoint(float x, float y) {
         exec("javascript:RE.focusAtPoint(" + x + ", " + y + ");");
     }
+
+    public void focusAtCaret(int caret) { exec("javascript:RE.focusAtCaret(" + caret +");"); }
 
     private String convertHexColorString(int color) {
         return String.format("#%06X", (0xFFFFFF & color));

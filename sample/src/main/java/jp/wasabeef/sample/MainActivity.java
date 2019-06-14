@@ -4,14 +4,12 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.webkit.ValueCallback;
 import android.widget.TextView;
 import java.util.List;
 import jp.wasabeef.richeditor.RichEditor;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RichEditor.ReceivedValue {
 
     private RichEditor mEditor;
     private TextView mPreview;
@@ -21,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mEditor = (RichEditor) findViewById(R.id.editor);
-        mEditor.setHtml("Chan qua di troi oi");
+        mEditor.setHtml("https://jobchat.vn");
         //mEditor.setEditorBackgroundColor(Color.BLUE);
         //mEditor.setBackgroundColor(Color.BLUE);
         //mEditor.setBackgroundResource(R.drawable.bg);
@@ -35,24 +33,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTextChange(String text) {
                 mPreview.setText(text);
-                mEditor.focusCursor();
+                Log.d("AAA", "Text:" + text);
             }
         });
-
-        mEditor.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                mEditor.evaluateJavascript("(function(){return window.getSelection().toString()})()",
-                        new ValueCallback<String>() {
-                            @Override
-                            public void onReceiveValue(String value) {
-                                Log.v("AAA", "Webview selected text: " + value);
-                            }
-                        });
-                return false;
-            }
-        });
+        mEditor.setOnReceivedValue(this);
 
         mEditor.setOnDecorationChangeListener(new RichEditor.OnDecorationStateListener() {
             @Override
@@ -63,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.action_undo).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEditor.undo();
+                //mEditor.undo();
+                mEditor.focusAtPoint(100, 50);
             }
         });
 
@@ -253,5 +238,10 @@ public class MainActivity extends AppCompatActivity {
                 mEditor.insertTodo();
             }
         });
+    }
+
+    @Override
+    public int valueReturned(String value) {
+        return Integer.parseInt(value);
     }
 }
