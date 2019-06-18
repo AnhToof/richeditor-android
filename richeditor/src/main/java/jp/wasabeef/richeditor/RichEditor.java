@@ -201,7 +201,10 @@ public class RichEditor extends WebView {
                 evaluateJavascript("javascript:RE.getSelectedHref();", new ValueCallback<String>() {
                     @Override
                     public void onReceiveValue(String value) {
-                        if (!value.isEmpty() && !Objects.equals(value, "null")) {
+                        if (!value.isEmpty() && !Objects.equals(value, "null") && (value.contains("https://") && value.substring(1, 9)
+                                .equals("https://")
+                                || value.contains("http://") && value.substring(1, 8).equals("http://")
+                                || value.contains("file:///android_asset/") && value.substring(1, 23).equals("file:///android_asset/"))) {
                             String link;
                             if (value.contains("file:///android_asset/")) {
                                 link = value.substring(23, value.length() - 1);
