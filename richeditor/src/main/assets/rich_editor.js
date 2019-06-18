@@ -327,14 +327,33 @@ RE.editor.addEventListener("touchend", function() {
   RE.backuprange();
   RE.enabledEditingItems();
 });
-RE.editor.addEventListener("input", RE.callback);
 RE.editor.addEventListener("keydown", function(e) {
+    RE.backuprange();
     var KEY_LEFT = 37, KEY_RIGHT = 39, KEY_DEL = 8, KEY_DEL_OTHER = 67;
     var x = e.which || e.keyCode;
     if (x == KEY_LEFT || x == KEY_RIGHT || x == KEY_DEL || x == KEY_DEL_OTHER) {
         RE.enabledEditingItems(e);
     }
+    /*if (x == 32) {
+
+      RE.restorerange();
+          var regex = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)(?![^<]*>|[^<>]*<\/)/g
+          var sel = document.getSelection();
+          if (sel.toString().length == 0) {
+            var str = RE.getHtml().replace(regex, "<a href=$&>$&</a>");
+            RE.setHtml(str);
+          } else if (sel.rangeCount) {
+             var str = RE.getHtml().replace(regex, "<a href=$&>$&</a>");
+             RE.setHtml(str);
+         }
+         var range = sel.getRangeAt(0).cloneRange();
+        range.surroundContents(RE.editor);
+        sel.removeAllRanges();
+        sel.addRange(range);
+          RE.callback();
+    }*/
 });
+RE.editor.addEventListener("input", RE.callback);
 RE.editor.addEventListener("click", RE.enabledEditingItems);
 RE.editor.addEventListener("focus", function(){
     RE.backuprange();
@@ -359,4 +378,76 @@ range.setEnd(textNode, caret);
 var sel = window.getSelection();
 sel.removeAllRanges();
 sel.addRange(range);
+};
+
+RE.rangeOrCaretSelectionExists = function() {
+    //!! coerces a null to bool
+    var sel = document.getSelection();
+    if (sel && (sel.type == "Range" || sel.type == "Caret")) {
+        return true;
+    }
+    return false;
+};
+
+/**
+Recursively search element ancestors to find a element nodeName e.g. A
+**/
+RE.findNodeByNameInContainer = function(element, nodeName, rootElementId) {
+    if (element.nodeName == nodeName) {
+        return element;
+    } else {
+        if (element.id === rootElementId) {
+            return null;
+        }
+        RE.findNodeByNameInContainer(element.parentElement, nodeName, rootElementId);
+    }
+};
+
+RE.isAnchorNode = function(node) {
+    return ("A" == node.nodeName);
+};
+
+RE.getAnchorTagsInNode = function(node) {
+    var links = [];
+
+    while (node.nextSibling !== null && node.nextSibling !== undefined) {
+        node = node.nextSibling;
+        if (RE.isAnchorNode(node)) {
+            links.push(node.getAttribute('href'));
+        }
+    }
+    return links;
+};
+
+/**
+ * If the current selection's parent is an anchor tag, get the href.
+ * @returns {string}
+ */
+RE.getSelectedHref = function() {
+    var href, sel;
+    href = '';
+    sel = window.getSelection();
+    if (!RE.rangeOrCaretSelectionExists()) {
+        return null;
+    }
+
+    var tags = RE.getAnchorTagsInNode(sel.anchorNode);
+    //if more than one link is there, return null
+    if (tags.length > 1) {
+        return null;
+    } else if (tags.length == 1) {
+        href = tags[0];
+    } else {
+        var node = RE.findNodeByNameInContainer(sel.anchorNode.parentElement, 'A', 'editor');
+        href = node.href;
+    }
+
+    return href ? href : null;
+};
+
+RE.replaceLinkIfExist = function() {
+      var regex = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)(?![^<]*>|[^<>]*<\/)/g
+      var str = RE.getHtml().replace(regex, "<a href=$&>$&</a>");
+      RE.setHtml(str);
+      RE.callback();
 };

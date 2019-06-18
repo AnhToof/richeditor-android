@@ -24,6 +24,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Copyright (C) 2017 Wasabeef
@@ -70,6 +71,10 @@ public class RichEditor extends WebView {
         void valueReturned(String value);
     }
 
+    public interface OnLinkClickListener {
+        void onLinkClicked(String link);
+    }
+
     private static final String SETUP_HTML = "file:///android_asset/editor.html";
     private static final String CALLBACK_SCHEME = "re-callback://";
     private static final String STATE_SCHEME = "re-state://";
@@ -80,6 +85,7 @@ public class RichEditor extends WebView {
     private OnDecorationStateListener mDecorationStateListener;
     private AfterInitialLoadListener mLoadListener;
     private ReceivedValue mReceivedValue;
+    private OnLinkClickListener mOnLinkClickListener;
 
     public RichEditor(Context context) {
         this(context, null);
@@ -115,12 +121,10 @@ public class RichEditor extends WebView {
         if (event.getAction() == KeyEvent.ACTION_UP) {
             switch (event.getKeyCode()) {
                 case KeyEvent.KEYCODE_SPACE: {
-                    Log.d("AAA", "SPACE");
                     mOldContentsToCompare = mContents;
                     break;
                 }
                 case KeyEvent.KEYCODE_DEL: {
-                    Log.d("AAA", "DELETE");
                     break;
                 }
             }
@@ -148,16 +152,20 @@ public class RichEditor extends WebView {
         mReceivedValue = listener;
     }
 
+    public void setOnLinkClickListener(OnLinkClickListener listener) {
+        mOnLinkClickListener = listener;
+    }
+
     private void callback(String text) {
         mContents = text.replaceFirst(CALLBACK_SCHEME, "");
-        if (!mOldContentsToCompare.isEmpty()) {
+        /*if (!mOldContentsToCompare.isEmpty()) {
             int indexAdded = Utils.indexOfNewCharacterAdded(mOldContentsToCompare, mContents);
             String contentBefore = Utils.getTextBeforeIndex(mContents, indexAdded);
             if (Utils.isKindOfLink(contentBefore)) {
                 //insertLink(contentBefore, contentBefore);
             }
             mOldContentsToCompare = "";
-        }
+        }*/
         if (mTextChangeListener != null) {
             mTextChangeListener.onTextChange(mContents);
         }
@@ -187,6 +195,22 @@ public class RichEditor extends WebView {
                         String result = value.substring(index + 1, value.length() - 1);
                         if (mReceivedValue != null) {
                             mReceivedValue.valueReturned(result);
+                        }
+                    }
+                });
+                evaluateJavascript("javascript:RE.getSelectedHref();", new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {
+                        if (!value.isEmpty() && !Objects.equals(value, "null")) {
+                            String link;
+                            if (value.contains("file:///android_asset/")) {
+                                link = value.substring(23, value.length() - 1);
+                            } else {
+                                link = value;
+                            }
+                            if (mOnLinkClickListener != null) {
+                                mOnLinkClickListener.onLinkClicked(link);
+                            }
                         }
                     }
                 });
@@ -249,6 +273,27 @@ public class RichEditor extends WebView {
     public void setEditorFontColor(int color) {
         String hex = convertHexColorString(color);
         exec("javascript:RE.setBaseTextColor('" + hex + "');");
+    }
+
+    public int getCaretPosition() {
+        final int[] caret = { 0 };
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            evaluateJavascript("javascript:RE.currentSelection;", new ValueCallback<String>() {
+                @Override
+                public void onReceiveValue(String value) {
+                    int index = 0;
+                    for (int i = value.length() - 1; i > 0; i--) {
+                        if (value.charAt(i) == ':') {
+                            index = i;
+                            break;
+                        }
+                    }
+                    String result = value.substring(index + 1, value.length() - 1);
+                    caret[0] = Integer.parseInt(result);
+                }
+            });
+        }
+        return caret[0];
     }
 
     public void setEditorFontSize(int px) {
@@ -460,6 +505,10 @@ public class RichEditor extends WebView {
 
     private String convertHexColorString(int color) {
         return String.format("#%06X", (0xFFFFFF & color));
+    }
+
+    public void replaceContentIfLinkExist() {
+        exec("javascript:RE.replaceLinkIfExist();");
     }
 
     protected void exec(final String trigger) {

@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity implements RichEditor.Receiv
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mEditor = (RichEditor) findViewById(R.id.editor);
-        mEditor.setHtml("https://jobchat.vn");
+        mEditor.setHtml("https://jobchat.vn oi troi oi facebook.com");
         //mEditor.setEditorBackgroundColor(Color.BLUE);
         //mEditor.setBackgroundColor(Color.BLUE);
         //mEditor.setBackgroundResource(R.drawable.bg);
@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements RichEditor.Receiv
         mEditor.setOnDecorationChangeListener(new RichEditor.OnDecorationStateListener() {
             @Override
             public void onStateChangeListener(String text, List<RichEditor.Type> types) {
+                Log.d("AAA", "AAA:" + text);
             }
         });
 
@@ -229,7 +230,8 @@ public class MainActivity extends AppCompatActivity implements RichEditor.Receiv
         findViewById(R.id.action_insert_link).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEditor.insertLink("https://github.com/wasabeef", "wasabeef");
+                //mEditor.insertLink("www.github.com/wasabeef", "wasabeef");
+                mEditor.replaceContentIfLinkExist();
             }
         });
         findViewById(R.id.action_insert_checkbox).setOnClickListener(new View.OnClickListener() {
@@ -242,6 +244,6 @@ public class MainActivity extends AppCompatActivity implements RichEditor.Receiv
 
     @Override
     public void valueReturned(String value) {
-        Log.d("AAA","AAA:" + value);
+
     }
 }
