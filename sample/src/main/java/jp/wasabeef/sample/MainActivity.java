@@ -34,7 +34,13 @@ public class MainActivity extends AppCompatActivity implements RichEditor.Receiv
             @Override
             public void onTextChange(String text) {
                 mPreview.setText(text);
-                Log.d("AAA", "Text:" + text);
+            }
+        });
+        mEditor.setOnLinkClickListener(new RichEditor.OnLinkClickListener() {
+
+            @Override
+            public void onLinkClicked(String link) {
+                Log.d("AAA", "BBB");
             }
         });
         mEditor.setOnReceivedValue(this);
@@ -245,6 +251,5 @@ public class MainActivity extends AppCompatActivity implements RichEditor.Receiv
 
     @Override
     public void valueReturned(String value) {
-
     }
 }

@@ -78,6 +78,7 @@ public class RichEditor extends WebView {
     private static final String SETUP_HTML = "file:///android_asset/editor.html";
     private static final String CALLBACK_SCHEME = "re-callback://";
     private static final String STATE_SCHEME = "re-state://";
+    private static final String SELECT_LINK_SCHEME = "re-stateother://";
     private boolean isReady = false;
     private String mContents;
     private String mOldContentsToCompare = "";
@@ -167,27 +168,32 @@ public class RichEditor extends WebView {
                         }
                     }
                 });
-                evaluateJavascript("javascript:RE.getSelectedHref();", new ValueCallback<String>() {
-                    @Override
-                    public void onReceiveValue(String value) {
-                        if (!value.isEmpty() && !Objects.equals(value, "null") && (value.contains("https://") && value.substring(1, 9)
-                                .equals("https://")
-                                || value.contains("http://") && value.substring(1, 8).equals("http://")
-                                || value.contains("file:///android_asset/") && value.substring(1, 23).equals("file:///android_asset/"))) {
-                            String link;
-                            if (value.contains("file:///android_asset/")) {
-                                link = value.substring(23, value.length() - 1);
-                            } else {
-                                link = value;
-                            }
-                            if (mOnLinkClickListener != null) {
-                                mOnLinkClickListener.onLinkClicked(link);
-                            }
-                        }
-                    }
-                });
             }
             mDecorationStateListener.onStateChangeListener(state, types);
+        }
+    }
+
+    private void checkSelectLink(String text) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            evaluateJavascript("javascript:RE.getSelectedHref();", new ValueCallback<String>() {
+                @Override
+                public void onReceiveValue(String value) {
+                    if (!value.isEmpty() && !Objects.equals(value, "null") && (value.contains("https://") && value.substring(1, 9)
+                            .equals("https://")
+                            || value.contains("http://") && value.substring(1, 8).equals("http://")
+                            || value.contains("file:///android_asset/") && value.substring(1, 23).equals("file:///android_asset/"))) {
+                        String link;
+                        if (value.contains("file:///android_asset/")) {
+                            link = value.substring(23, value.length() - 1);
+                        } else {
+                            link = value;
+                        }
+                        if (mOnLinkClickListener != null) {
+                            mOnLinkClickListener.onLinkClicked(link);
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -528,6 +534,9 @@ public class RichEditor extends WebView {
                 return true;
             } else if (TextUtils.indexOf(url, STATE_SCHEME) == 0) {
                 stateCheck(decode);
+                return true;
+            } else if (TextUtils.indexOf(url, SELECT_LINK_SCHEME) == 0) {
+                checkSelectLink(decode);
                 return true;
             }
 
