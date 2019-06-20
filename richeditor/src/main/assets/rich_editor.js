@@ -334,24 +334,6 @@ RE.editor.addEventListener("keydown", function(e) {
     if (x == KEY_LEFT || x == KEY_RIGHT || x == KEY_DEL || x == KEY_DEL_OTHER) {
         RE.enabledEditingItems(e);
     }
-    /*if (x == 32) {
-
-      RE.restorerange();
-          var regex = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)(?![^<]*>|[^<>]*<\/)/g
-          var sel = document.getSelection();
-          if (sel.toString().length == 0) {
-            var str = RE.getHtml().replace(regex, "<a href=$&>$&</a>");
-            RE.setHtml(str);
-          } else if (sel.rangeCount) {
-             var str = RE.getHtml().replace(regex, "<a href=$&>$&</a>");
-             RE.setHtml(str);
-         }
-         var range = sel.getRangeAt(0).cloneRange();
-        range.surroundContents(RE.editor);
-        sel.removeAllRanges();
-        sel.addRange(range);
-          RE.callback();
-    }*/
 });
 RE.editor.addEventListener("input", RE.callback);
 RE.editor.addEventListener("click", RE.enabledEditingItems);

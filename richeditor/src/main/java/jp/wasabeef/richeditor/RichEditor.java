@@ -109,29 +109,6 @@ public class RichEditor extends WebView {
         applyAttributes(context, attrs);
     }
 
-    @Override
-    public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-        return new BaseInputConnection(this, false);
-    }
-
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        boolean dispatchFirst = super.dispatchKeyEvent(event);
-        // Listening here for whatever key events you need
-        if (event.getAction() == KeyEvent.ACTION_UP) {
-            switch (event.getKeyCode()) {
-                case KeyEvent.KEYCODE_SPACE: {
-                    mOldContentsToCompare = mContents;
-                    break;
-                }
-                case KeyEvent.KEYCODE_DEL: {
-                    break;
-                }
-            }
-        }
-        return dispatchFirst;
-    }
-
     protected EditorWebViewClient createWebviewClient() {
         return new EditorWebViewClient();
     }
@@ -158,14 +135,6 @@ public class RichEditor extends WebView {
 
     private void callback(String text) {
         mContents = text.replaceFirst(CALLBACK_SCHEME, "");
-        /*if (!mOldContentsToCompare.isEmpty()) {
-            int indexAdded = Utils.indexOfNewCharacterAdded(mOldContentsToCompare, mContents);
-            String contentBefore = Utils.getTextBeforeIndex(mContents, indexAdded);
-            if (Utils.isKindOfLink(contentBefore)) {
-                //insertLink(contentBefore, contentBefore);
-            }
-            mOldContentsToCompare = "";
-        }*/
         if (mTextChangeListener != null) {
             mTextChangeListener.onTextChange(mContents);
         }
