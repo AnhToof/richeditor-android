@@ -288,7 +288,7 @@ RE.enabledEditingItems = function(e) {
         items.push(formatBlock);
     }
 
-    window.location.href = "re-state://" + encodeURIComponent(items.join(','));
+    window.location.href = "re-state://" + encodeURIComponent(items.join(','));z
 }
 
 RE.focus = function() {
@@ -303,7 +303,7 @@ RE.focus = function() {
 
 
 RE.focusCursor = function() {
-  RE.editor.focus();
+  RE.editor.click();
 }
 
 RE.blurFocus = function() {
@@ -316,24 +316,21 @@ RE.removeFormat = function() {
 
 // Event Listeners
 RE.editor.addEventListener("touchmove", function() {
-  RE.backuprange();
-  RE.enabledEditingItems();
+  RE.enableOpenHref();
+
 });
 RE.editor.addEventListener("touchstart", function() {
-  RE.backuprange();
-  RE.enabledEditingItems();
+RE.enableOpenHref();
+
 });
 RE.editor.addEventListener("touchend", function() {
-  RE.backuprange();
-  RE.enabledEditingItems();
+  RE.enableOpenHref();
 });
-RE.editor.addEventListener("keydown", function(e) {
-    RE.backuprange();
-    var KEY_LEFT = 37, KEY_RIGHT = 39, KEY_DEL = 8, KEY_DEL_OTHER = 67;
-    var x = e.which || e.keyCode;
-    if (x == KEY_LEFT || x == KEY_RIGHT || x == KEY_DEL || x == KEY_DEL_OTHER) {
-        RE.enabledEditingItems(e);
-    }
+RE.editor.addEventListener("touchcancel", function() {
+  RE.enableOpenHref();
+});
+RE.editor.addEventListener("keyup", function(e) {
+   RE.enabledEditingItems(e);
 });
 // Initializations
 RE.enableOpenHref = function() {
@@ -344,8 +341,7 @@ var items = [];
 
 RE.editor.addEventListener("input", RE.callback);
 RE.editor.addEventListener("click", function() {
-  RE.enabledEditingItems();
-    RE.enableOpenHref();
+RE.enabledEditingItems();
 });
 RE.editor.addEventListener("focus", function(){
     RE.backuprange();

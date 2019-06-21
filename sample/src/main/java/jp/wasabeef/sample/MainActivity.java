@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity implements RichEditor.Receiv
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mEditor = (RichEditor) findViewById(R.id.editor);
-        mEditor.setHtml("http://google.com/ oi troi oi facebook.com/ zxc");
+        mEditor.setHtml("http://google.com/ oi <b>troi</b> oi facebook.com/ zxc");
         //mEditor.setEditorBackgroundColor(Color.BLUE);
         //mEditor.setBackgroundColor(Color.BLUE);
         //mEditor.setBackgroundResource(R.drawable.bg);
@@ -34,14 +34,13 @@ public class MainActivity extends AppCompatActivity implements RichEditor.Receiv
             @Override
             public void onTextChange(String text) {
                 mPreview.setText(text);
-                mEditor.focusCursor();
             }
         });
         mEditor.setOnLinkClickListener(new RichEditor.OnLinkClickListener() {
 
             @Override
             public void onLinkClicked(String link) {
-                Log.d("AAA", "BBB");
+                Log.d("AAA", "Link");
             }
         });
         mEditor.setOnReceivedValue(this);
@@ -49,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements RichEditor.Receiv
         mEditor.setOnDecorationChangeListener(new RichEditor.OnDecorationStateListener() {
             @Override
             public void onStateChangeListener(String text, List<RichEditor.Type> types) {
-                Log.d("AAA", "AAA:" + text);
+                Log.d("AAA", "Type:" + text);
             }
         });
 

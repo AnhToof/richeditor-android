@@ -10,10 +10,6 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
-import android.view.inputmethod.BaseInputConnection;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputConnection;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -81,7 +77,7 @@ public class RichEditor extends WebView {
     private static final String SELECT_LINK_SCHEME = "re-stateother://";
     private boolean isReady = false;
     private String mContents;
-    private String mOldContentsToCompare = "";
+    private boolean mIsDelKeyPress = false;
     private OnTextChangeListener mTextChangeListener;
     private OnDecorationStateListener mDecorationStateListener;
     private AfterInitialLoadListener mLoadListener;
@@ -136,6 +132,7 @@ public class RichEditor extends WebView {
 
     private void callback(String text) {
         mContents = text.replaceFirst(CALLBACK_SCHEME, "");
+        //
         if (mTextChangeListener != null) {
             mTextChangeListener.onTextChange(mContents);
         }
@@ -178,8 +175,7 @@ public class RichEditor extends WebView {
             evaluateJavascript("javascript:RE.getSelectedHref();", new ValueCallback<String>() {
                 @Override
                 public void onReceiveValue(String value) {
-                    if (!value.isEmpty() && !Objects.equals(value, "null") && (value.contains("https://") && value.substring(1, 9)
-                            .equals("https://")
+                    if (!value.isEmpty() && !Objects.equals(value, "null") && (value.contains("https://") && value.substring(1, 9).equals("https://")
                             || value.contains("http://") && value.substring(1, 8).equals("http://")
                             || value.contains("file:///android_asset/") && value.substring(1, 23).equals("file:///android_asset/"))) {
                         String link;
