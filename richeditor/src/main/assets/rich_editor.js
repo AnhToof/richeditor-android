@@ -316,20 +316,21 @@ RE.removeFormat = function() {
 
 // Event Listeners
 RE.editor.addEventListener("touchmove", function() {
-  RE.enableOpenHref();
-
+   RE.enabledEditingItems(e);
 });
 RE.editor.addEventListener("touchstart", function() {
-RE.enableOpenHref();
-
+   RE.enabledEditingItems(e);
 });
 RE.editor.addEventListener("touchend", function() {
-  RE.enableOpenHref();
+   RE.enabledEditingItems(e);
 });
 RE.editor.addEventListener("touchcancel", function() {
-  RE.enableOpenHref();
+   RE.enabledEditingItems(e);
 });
+RE.currentKey = {"keyCode": 0};
 RE.editor.addEventListener("keyup", function(e) {
+
+   RE.currentKey = { "keyCode": e.which};
    RE.enabledEditingItems(e);
 });
 // Initializations

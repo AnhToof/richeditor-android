@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Copyright (C) 2017 Wasabeef
@@ -146,22 +148,37 @@ public class RichEditor extends WebView {
                 types.add(type);
             }
         }
-
         if (mDecorationStateListener != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                evaluateJavascript("javascript:RE.currentSelection;", new ValueCallback<String>() {
+                final int[] keyCode = { 0 };
+                evaluateJavascript("javascript:RE.currentKey;", new ValueCallback<String>() {
                     @Override
                     public void onReceiveValue(String value) {
-                        int index = 0;
-                        for (int i = value.length() - 1; i > 0; i--) {
-                            if (value.charAt(i) == ':') {
-                                index = i;
-                                break;
-                            }
+                        try {
+                            JSONObject object = new JSONObject(value);
+                            keyCode[0] = object.getInt("keyCode");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                        String result = value.substring(index + 1, value.length() - 1);
-                        if (mReceivedValue != null) {
-                            mReceivedValue.valueReturned(result);
+                    }
+                });
+
+                evaluateJavascript("javascript:RE.getSelectedHref();", new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {
+                        if (!value.isEmpty() && !Objects.equals(value, "null") && (value.contains("https://") && value.substring(1, 9)
+                                .equals("https://")
+                                || value.contains("http://") && value.substring(1, 8).equals("http://")
+                                || value.contains("file:///android_asset/") && value.substring(1, 23).equals("file:///android_asset/"))) {
+                            String link;
+                            if (value.contains("file:///android_asset/")) {
+                                link = value.substring(23, value.length() - 1);
+                            } else {
+                                link = value;
+                            }
+                            if (mOnLinkClickListener != null && keyCode[0] != 229) {
+                                mOnLinkClickListener.onLinkClicked(link);
+                            }
                         }
                     }
                 });
@@ -530,9 +547,6 @@ public class RichEditor extends WebView {
                 return true;
             } else if (TextUtils.indexOf(url, STATE_SCHEME) == 0) {
                 stateCheck(decode);
-                return true;
-            } else if (TextUtils.indexOf(url, SELECT_LINK_SCHEME) == 0) {
-                checkSelectLink(decode);
                 return true;
             }
 

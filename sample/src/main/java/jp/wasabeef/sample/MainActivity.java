@@ -251,5 +251,6 @@ public class MainActivity extends AppCompatActivity implements RichEditor.Receiv
 
     @Override
     public void valueReturned(String value) {
+
     }
 }
