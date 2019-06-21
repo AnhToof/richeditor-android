@@ -318,20 +318,14 @@ RE.removeFormat = function() {
 RE.editor.addEventListener("touchmove", function() {
   RE.backuprange();
   RE.enabledEditingItems();
-      RE.enableOpenHref();
-
 });
 RE.editor.addEventListener("touchstart", function() {
   RE.backuprange();
   RE.enabledEditingItems();
-      RE.enableOpenHref();
-
 });
 RE.editor.addEventListener("touchend", function() {
   RE.backuprange();
   RE.enabledEditingItems();
-      RE.enableOpenHref();
-
 });
 RE.editor.addEventListener("keydown", function(e) {
     RE.backuprange();
@@ -357,7 +351,6 @@ RE.editor.addEventListener("click", function() {
 RE.editor.addEventListener("focus", function(){
     RE.backuprange();
     RE.enabledEditingItems();
-        RE.enableOpenHref();
 });
 
 RE.focusAtPoint = function(x, y) {
