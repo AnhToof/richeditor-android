@@ -303,7 +303,7 @@ RE.focus = function() {
 
 
 RE.focusCursor = function() {
-  RE.editor.click();
+  RE.editor.focus();
 }
 
 RE.blurFocus = function() {
@@ -346,7 +346,6 @@ RE.editor.addEventListener("input", RE.callback);
 RE.editor.addEventListener("click", function() {
   RE.enabledEditingItems();
     RE.enableOpenHref();
-
 });
 RE.editor.addEventListener("focus", function(){
     RE.backuprange();

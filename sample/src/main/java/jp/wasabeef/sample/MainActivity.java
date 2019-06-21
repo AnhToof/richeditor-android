@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements RichEditor.Receiv
             @Override
             public void onTextChange(String text) {
                 mPreview.setText(text);
+                mEditor.focusCursor();
             }
         });
         mEditor.setOnLinkClickListener(new RichEditor.OnLinkClickListener() {
