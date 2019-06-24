@@ -288,7 +288,7 @@ RE.enabledEditingItems = function(e) {
         items.push(formatBlock);
     }
 
-    window.location.href = "re-state://" + encodeURIComponent(items.join(','));z
+    window.location.href = "re-state://" + encodeURIComponent(items.join(','));
 }
 
 RE.focus = function() {
@@ -300,7 +300,6 @@ RE.focus = function() {
     selection.addRange(range);
     RE.editor.focus();
 }
-
 
 RE.focusCursor = function() {
   RE.editor.click();
@@ -334,7 +333,10 @@ RE.editor.addEventListener("keyup", function(e) {
 });
 
 RE.editor.addEventListener("input", RE.callback);
-RE.editor.addEventListener("click", RE.enabledEditingItems);
+RE.editor.addEventListener("click", function() {
+  RE.currentKey = { "keyCode": 0};
+  RE.enabledEditingItems();
+});
 RE.editor.addEventListener("focus", function(){
     RE.backuprange();
     RE.enabledEditingItems();
