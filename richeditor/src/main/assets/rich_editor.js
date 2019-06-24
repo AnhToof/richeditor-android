@@ -316,34 +316,25 @@ RE.removeFormat = function() {
 
 // Event Listeners
 RE.editor.addEventListener("touchmove", function() {
-   RE.enabledEditingItems(e);
+   RE.backuprange();
+   RE.enabledEditingItems();
 });
 RE.editor.addEventListener("touchstart", function() {
-   RE.enabledEditingItems(e);
+   RE.backuprange();
+   RE.enabledEditingItems();
 });
 RE.editor.addEventListener("touchend", function() {
-   RE.enabledEditingItems(e);
+   RE.backuprange();
+   RE.enabledEditingItems();
 });
-RE.editor.addEventListener("touchcancel", function() {
-   RE.enabledEditingItems(e);
-});
+
 RE.currentKey = {"keyCode": 0};
 RE.editor.addEventListener("keyup", function(e) {
-
-   RE.currentKey = { "keyCode": e.which};
-   RE.enabledEditingItems(e);
+  RE.currentKey = { "keyCode": e.which};
 });
-// Initializations
-RE.enableOpenHref = function() {
-var items = [];
-    items.push('link');
-    window.location.href = "re-stateother://" + encodeURIComponent(items.join(','));
-}
 
 RE.editor.addEventListener("input", RE.callback);
-RE.editor.addEventListener("click", function() {
-RE.enabledEditingItems();
-});
+RE.editor.addEventListener("click", RE.enabledEditingItems);
 RE.editor.addEventListener("focus", function(){
     RE.backuprange();
     RE.enabledEditingItems();
