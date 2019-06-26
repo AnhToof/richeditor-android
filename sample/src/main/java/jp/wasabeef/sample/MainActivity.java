@@ -9,7 +9,7 @@ import android.widget.TextView;
 import java.util.List;
 import jp.wasabeef.richeditor.RichEditor;
 
-public class MainActivity extends AppCompatActivity implements RichEditor.ReceivedValue {
+public class MainActivity extends AppCompatActivity implements RichEditor.ReceivedCaret {
 
     private RichEditor mEditor;
     private TextView mPreview;
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements RichEditor.Receiv
         mEditor.setPadding(10, 10, 10, 10);
         //mEditor.setBackground("https://raw.githubusercontent.com/wasabeef/art/master/chip.jpg");
         mEditor.setPlaceholder("Insert text here...");
-        //mEditor.setInputEnabled(false);
+        mEditor.setInputEnabled(false);
 
         mPreview = (TextView) findViewById(R.id.preview);
         mEditor.setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
@@ -281,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements RichEditor.Receiv
     }
 
     @Override
-    public void valueReturned(String value) {
-
+    public void onGetCaretSuccess (int value) {
+        Log.d("AAA", "Caret:" + value);
     }
 }

@@ -65,8 +65,8 @@ public class RichEditor extends WebView {
         void onAfterInitialLoad(boolean isReady);
     }
 
-    public interface ReceivedValue {
-        void valueReturned(String value);
+    public interface ReceivedCaret {
+        void onGetCaretSuccess(int value);
     }
 
     public interface OnLinkClickListener {
@@ -82,7 +82,7 @@ public class RichEditor extends WebView {
     private OnTextChangeListener mTextChangeListener;
     private OnDecorationStateListener mDecorationStateListener;
     private AfterInitialLoadListener mLoadListener;
-    private ReceivedValue mReceivedValue;
+    private ReceivedCaret mReceivedCaret;
     private OnLinkClickListener mOnLinkClickListener;
 
     public RichEditor(Context context) {
@@ -123,8 +123,8 @@ public class RichEditor extends WebView {
         mLoadListener = listener;
     }
 
-    public void setOnReceivedValue(ReceivedValue listener) {
-        mReceivedValue = listener;
+    public void setOnReceivedValue(ReceivedCaret listener) {
+        mReceivedCaret = listener;
     }
 
     public void setOnLinkClickListener(OnLinkClickListener listener) {
@@ -154,7 +154,9 @@ public class RichEditor extends WebView {
                     public void onReceiveValue(String value) {
                         try {
                             JSONObject object = new JSONObject(value);
-                            mCaretPosition = object.getInt("currentCaret");
+                            if (mReceivedCaret != null) {
+                                mReceivedCaret.onGetCaretSuccess(object.getInt("currentCaret"));
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
