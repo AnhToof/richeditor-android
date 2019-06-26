@@ -78,6 +78,7 @@ public class RichEditor extends WebView {
     private static final String STATE_SCHEME = "re-state://";
     private boolean isReady = false;
     private String mContents;
+    private int mCaretPosition;
     private OnTextChangeListener mTextChangeListener;
     private OnDecorationStateListener mDecorationStateListener;
     private AfterInitialLoadListener mLoadListener;
@@ -148,11 +149,15 @@ public class RichEditor extends WebView {
         }
         if (mDecorationStateListener != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                Log.d("AAA", "State");
                 evaluateJavascript("javascript:RE.currentCaret;", new ValueCallback<String>() {
                     @Override
                     public void onReceiveValue(String value) {
-                        Log.d("AAA", "Value:" + value);
+                        try {
+                            JSONObject object = new JSONObject(value);
+                            mCaretPosition = object.getInt("currentCaret");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
 
@@ -187,7 +192,8 @@ public class RichEditor extends WebView {
                         }
                     }
                 });
-            } mDecorationStateListener.onStateChangeListener(state, types);
+            }
+            mDecorationStateListener.onStateChangeListener(state, types);
         }
     }
 
@@ -245,27 +251,6 @@ public class RichEditor extends WebView {
     public void setEditorFontColor(int color) {
         String hex = convertHexColorString(color);
         exec("javascript:RE.setBaseTextColor('" + hex + "');");
-    }
-
-    public int getCaretPosition() {
-        final int[] caret = { 0 };
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            evaluateJavascript("javascript:RE.currentSelection;", new ValueCallback<String>() {
-                @Override
-                public void onReceiveValue(String value) {
-                    int index = 0;
-                    for (int i = value.length() - 1; i > 0; i--) {
-                        if (value.charAt(i) == ':') {
-                            index = i;
-                            break;
-                        }
-                    }
-                    String result = value.substring(index + 1, value.length() - 1);
-                    caret[0] = Integer.parseInt(result);
-                }
-            });
-        }
-        return caret[0];
     }
 
     public void setEditorFontSize(int px) {
@@ -483,7 +468,13 @@ public class RichEditor extends WebView {
         exec("javascript:RE.replaceLinkIfExist();");
     }
 
-    public void setCaret(int caret) { exec("javascript:RE.setCaret(" + caret + ");"); }
+    public void setCaret(int caret) {
+        exec("javascript:RE.setCaret(" + caret + ");");
+    }
+
+    public int getCaretPosition() {
+        return mCaretPosition;
+    }
 
     protected void exec(final String trigger) {
         if (isReady) {
