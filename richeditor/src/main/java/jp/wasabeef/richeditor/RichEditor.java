@@ -148,6 +148,14 @@ public class RichEditor extends WebView {
         }
         if (mDecorationStateListener != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                Log.d("AAA", "State");
+                evaluateJavascript("javascript:RE.currentCaret;", new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {
+                        Log.d("AAA", "Value:" + value);
+                    }
+                });
+
                 final int[] keyCode = { 0 };
                 evaluateJavascript("javascript:RE.currentKey;", new ValueCallback<String>() {
                     @Override
@@ -179,8 +187,7 @@ public class RichEditor extends WebView {
                         }
                     }
                 });
-            }
-            mDecorationStateListener.onStateChangeListener(state, types);
+            } mDecorationStateListener.onStateChangeListener(state, types);
         }
     }
 
@@ -475,6 +482,8 @@ public class RichEditor extends WebView {
     public void replaceContentIfLinkExist() {
         exec("javascript:RE.replaceLinkIfExist();");
     }
+
+    public void setCaret(int caret) { exec("javascript:RE.setCaret(" + caret + ");"); }
 
     protected void exec(final String trigger) {
         if (isReady) {

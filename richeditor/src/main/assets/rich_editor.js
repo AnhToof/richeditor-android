@@ -315,16 +315,10 @@ RE.removeFormat = function() {
 
 // Event Listeners
 RE.editor.addEventListener("touchmove", function() {
-   RE.backuprange();
-   RE.enabledEditingItems();
 });
 RE.editor.addEventListener("touchstart", function() {
-   RE.backuprange();
-   RE.enabledEditingItems();
 });
 RE.editor.addEventListener("touchend", function() {
-   RE.backuprange();
-   RE.enabledEditingItems();
 });
 
 RE.currentKey = {"keyCode": 0};
@@ -333,14 +327,107 @@ RE.editor.addEventListener("keyup", function(e) {
 });
 
 RE.editor.addEventListener("input", RE.callback);
+RE.currentCaret = {
+  "currentCaret": 0
+};
 RE.editor.addEventListener("click", function() {
   RE.currentKey = { "keyCode": 0};
+  RE.currentCaret = { "currentCaret": RE.getCurrentCaret()}
   RE.enabledEditingItems();
 });
 RE.editor.addEventListener("focus", function(){
     RE.backuprange();
     RE.enabledEditingItems();
 });
+
+RE.getCurrentCaret = function() {
+  return getCurrentCursorPosition('editor');
+};
+
+function isChildOf(node, parentId) {
+    while (node !== null) {
+        if (node.id === parentId) {
+            return true;
+        }
+        node = node.parentNode;
+    }
+
+    return false;
+};
+
+function getCurrentCursorPosition(parentId) {
+    var selection = window.getSelection(), charCount = -1, node;
+
+    if (selection.focusNode) {
+        if (isChildOf(selection.focusNode, parentId)) {
+            node = selection.focusNode;
+            charCount = selection.focusOffset;
+
+            while (node) {
+                if (node.id === parentId) {
+                    break;
+                }
+
+                if (node.previousSibling) {
+                    node = node.previousSibling;
+                    charCount += node.textContent.length;
+                } else {
+                     node = node.parentNode;
+                     if (node === null) {
+                         break
+                     }
+                }
+           }
+      }
+   }
+
+    return charCount;
+};
+
+function createRange(node, chars, range) {
+    if (!range) {
+        range = document.createRange()
+        range.selectNode(node);
+        range.setStart(node, 0);
+    }
+
+    if (chars.count === 0) {
+        range.setEnd(node, chars.count);
+    } else if (node && chars.count >0) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            if (node.textContent.length < chars.count) {
+                chars.count -= node.textContent.length;
+            } else {
+                range.setEnd(node, chars.count);
+                chars.count = 0;
+            }
+        } else {
+           for (var lp = 0; lp < node.childNodes.length; lp++) {
+                range = createRange(node.childNodes[lp], chars, range);
+
+                if (chars.count === 0) {
+                    break;
+                }
+            }
+        }
+    }
+
+    return range;
+};
+
+RE.setCaret = function(caret) {
+  if (caret >= 0) {
+          var selection = window.getSelection();
+
+          range = createRange(RE.editor.parentNode, { count: caret + 1 });
+
+          if (range) {
+              range.collapse(false);
+              selection.removeAllRanges();
+              selection.addRange(range);
+          }
+      }
+};
 
 RE.focusAtPoint = function(x, y) {
     var range = document.caretRangeFromPoint(x, y) || document.createRange();
