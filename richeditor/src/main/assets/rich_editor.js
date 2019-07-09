@@ -131,11 +131,13 @@ RE.setUnderline = function() {
 RE.setBullets = function() {
     document.execCommand('insertUnorderedList', false, null);
     RE.enabledEditingItems();
+    RE.callback();
 }
 
 RE.setNumbers = function() {
     document.execCommand('insertOrderedList', false, null);
     RE.enabledEditingItems();
+    RE.callback();
 }
 
 RE.setTextColor = function(color) {
