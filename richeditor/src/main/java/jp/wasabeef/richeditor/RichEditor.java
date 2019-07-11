@@ -517,8 +517,9 @@ public class RichEditor extends WebView {
                 // No handling
                 return false;
             }
-
-            if (TextUtils.indexOf(url, CALLBACK_SCHEME) == 0) {
+            if (Utils.isKindOfLink(decode)) {
+                return true; //Prevent display link when action click on link while setInputEnable = false
+            } else if (TextUtils.indexOf(url, CALLBACK_SCHEME) == 0) {
                 callback(decode);
                 return true;
             } else if (TextUtils.indexOf(url, STATE_SCHEME) == 0) {
