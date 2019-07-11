@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -106,6 +107,11 @@ public class RichEditor extends WebView {
         loadUrl(SETUP_HTML);
 
         applyAttributes(context, attrs);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     protected EditorWebViewClient createWebviewClient() {
@@ -519,17 +525,19 @@ public class RichEditor extends WebView {
                 // No handling
                 return false;
             }
-            if (Utils.isKindOfLink(decode) && !mIsInputEnabled) {
-                return true; //Prevent display link when action click on link while setInputEnable = false
-            } else if (TextUtils.indexOf(url, CALLBACK_SCHEME) == 0) {
+            if (TextUtils.indexOf(url, CALLBACK_SCHEME) == 0) {
                 callback(decode);
                 return true;
             } else if (TextUtils.indexOf(url, STATE_SCHEME) == 0) {
                 stateCheck(decode);
                 return true;
             }
+            return true;
+        }
 
-            return super.shouldOverrideUrlLoading(view, url);
+        @Override
+        public boolean shouldOverrideKeyEvent(WebView view, KeyEvent event) {
+            return super.shouldOverrideKeyEvent(view, event);
         }
     }
 }
