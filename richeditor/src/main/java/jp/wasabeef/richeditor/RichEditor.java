@@ -79,6 +79,7 @@ public class RichEditor extends WebView {
     private boolean isReady = false;
     private String mContents;
     private int mCaretPosition;
+    private boolean mIsInputEnabled = true;
     private OnTextChangeListener mTextChangeListener;
     private OnDecorationStateListener mDecorationStateListener;
     private AfterInitialLoadListener mLoadListener;
@@ -315,6 +316,7 @@ public class RichEditor extends WebView {
     }
 
     public void setInputEnabled(Boolean inputEnabled) {
+        mIsInputEnabled = inputEnabled;
         exec("javascript:RE.setInputEnabled(" + inputEnabled + ")");
     }
 
@@ -517,7 +519,7 @@ public class RichEditor extends WebView {
                 // No handling
                 return false;
             }
-            if (Utils.isKindOfLink(decode)) {
+            if (Utils.isKindOfLink(decode) && !mIsInputEnabled) {
                 return true; //Prevent display link when action click on link while setInputEnable = false
             } else if (TextUtils.indexOf(url, CALLBACK_SCHEME) == 0) {
                 callback(decode);
