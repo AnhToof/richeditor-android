@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity implements RichEditor.Receiv
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mEditor = (RichEditor) findViewById(R.id.editor);
-        mEditor.setHtml("https://google.com asdasdasdasd");
+        mEditor.setHtml("Https://google.com asdasdasdasd");
         //mEditor.setEditorBackgroundColor(Color.BLUE);
         //mEditor.setBackgroundColor(Color.BLUE);
         //mEditor.setBackgroundResource(R.drawable.bg);
@@ -62,7 +62,8 @@ public class MainActivity extends AppCompatActivity implements RichEditor.Receiv
         findViewById(R.id.action_redo).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEditor.setCaret(85);
+                mEditor.replaceContentIfLinkExist();
+
             }
         });
 

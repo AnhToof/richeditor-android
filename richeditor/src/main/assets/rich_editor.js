@@ -517,7 +517,7 @@ RE.getSelectedHref = function() {
 };
 
 RE.replaceLinkIfExist = function() {
-      var regex = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)(?![^<]*>|[^<>]*<\/)/g
+      var regex = /(http|http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)(?![^<]*>|[^<>]*<\/)/i
       var str = RE.getHtml().replace(regex, "<a href=$&>$&</a>");
       RE.setHtml(str);
       RE.callback();

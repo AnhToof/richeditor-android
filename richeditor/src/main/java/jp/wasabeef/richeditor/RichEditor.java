@@ -508,6 +508,7 @@ public class RichEditor extends WebView {
     }
 
     protected class EditorWebViewClient extends WebViewClient {
+
         @Override
         public void onPageFinished(WebView view, String url) {
             isReady = url.equalsIgnoreCase(SETUP_HTML);
@@ -525,6 +526,7 @@ public class RichEditor extends WebView {
                 // No handling
                 return false;
             }
+            Log.d("AAA", "decode:" + decode);
             if (TextUtils.indexOf(url, CALLBACK_SCHEME) == 0) {
                 callback(decode);
                 return true;
@@ -533,11 +535,6 @@ public class RichEditor extends WebView {
                 return true;
             }
             return true;
-        }
-
-        @Override
-        public boolean shouldOverrideKeyEvent(WebView view, KeyEvent event) {
-            return super.shouldOverrideKeyEvent(view, event);
         }
     }
 }
