@@ -43,6 +43,10 @@ RE.getText = function() {
     return RE.editor.innerText;
 }
 
+RE.clientHeight = function() {
+    return RE.editor.clientHeight
+}
+
 RE.setBaseTextColor = function(color) {
     RE.editor.style.color  = color;
 }

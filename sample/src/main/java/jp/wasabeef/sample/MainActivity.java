@@ -19,11 +19,13 @@ public class MainActivity extends AppCompatActivity implements RichEditor.Receiv
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mEditor = (RichEditor) findViewById(R.id.editor);
-        mEditor.setHtml("Https://google.com asdasdasdasd");
+        mEditor.setTextColor(Color.RED);
+        mEditor.setEditorFontColor(Color.RED);
+        mEditor.setMaxLength(10);
         //mEditor.setEditorBackgroundColor(Color.BLUE);
         //mEditor.setBackgroundColor(Color.BLUE);
         //mEditor.setBackgroundResource(R.drawable.bg);
-        mEditor.replaceContentIfLinkExist();
+        //mEditor.replaceContentIfLinkExist();
         mEditor.setPadding(10, 10, 10, 10);
         //mEditor.setBackground("https://raw.githubusercontent.com/wasabeef/art/master/chip.jpg");
         mEditor.setPlaceholder("Insert text here...");
