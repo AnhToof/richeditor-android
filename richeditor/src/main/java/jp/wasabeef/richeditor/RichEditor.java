@@ -74,6 +74,10 @@ public class RichEditor extends WebView {
         void onLinkClicked(String link);
     }
 
+    public interface OnHeightChangeListener {
+        void onHeightChange(int height);
+    }
+
     private static final String SETUP_HTML = "file:///android_asset/editor.html";
     private static final String CALLBACK_SCHEME = "re-callback://";
     private static final String STATE_SCHEME = "re-state://";
@@ -86,6 +90,7 @@ public class RichEditor extends WebView {
     private AfterInitialLoadListener mLoadListener;
     private ReceivedCaret mReceivedCaret;
     private OnLinkClickListener mOnLinkClickListener;
+    private OnHeightChangeListener mOnHeightChangeListener;
 
     public RichEditor(Context context) {
         this(context, null);
@@ -130,6 +135,10 @@ public class RichEditor extends WebView {
         mLoadListener = listener;
     }
 
+    public void setOnHeightChangeListener(OnHeightChangeListener listener) {
+        mOnHeightChangeListener = listener;
+    }
+
     public void setOnReceivedValue(ReceivedCaret listener) {
         mReceivedCaret = listener;
     }
@@ -143,6 +152,7 @@ public class RichEditor extends WebView {
         if (mTextChangeListener != null) {
             mTextChangeListener.onTextChange(mContents);
         }
+        updateHeight();
         exec("javascript:RE.enabledEditingItems();");
     }
 
@@ -203,6 +213,20 @@ public class RichEditor extends WebView {
                 });
             }
             mDecorationStateListener.onStateChangeListener(state, types);
+        }
+    }
+
+    private void updateHeight() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            evaluateJavascript("javascript:document.getElementById('editor').clientHeight;", new ValueCallback<String>() {
+                @Override
+                public void onReceiveValue(String value) {
+                    int height = Integer.parseInt(value);
+                    if (mOnHeightChangeListener != null && height > 0) {
+                        mOnHeightChangeListener.onHeightChange(height);
+                    }
+                }
+            });
         }
     }
 
@@ -526,7 +550,6 @@ public class RichEditor extends WebView {
                 // No handling
                 return false;
             }
-            Log.d("AAA", "decode:" + decode);
             if (TextUtils.indexOf(url, CALLBACK_SCHEME) == 0) {
                 callback(decode);
                 return true;
